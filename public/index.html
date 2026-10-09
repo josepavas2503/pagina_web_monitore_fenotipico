@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Monitoreo Fenotípico</title>
+    <style>
+        :root {
+            --primary: #1b4332;
+            --accent: #2d6a4f;
+            --bg: #f4f6f8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Navbar */
+        nav {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        nav h1 { margin: 0; font-size: 1.2rem; }
+
+        .nav-links button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 10px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .nav-links button:hover, .nav-links button.active {
+            background-color: var(--accent);
+        }
+
+        /* Vistas */
+        .view { display: none; padding: 20px; flex: 1; }
+        .view.active { display: flex; flex-direction: column; }
+
+        /* Vista Menú */
+        .menu-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 40px auto;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+        .card h2 { color: var(--primary); }
+
+        /* Vista Imágenes */
+        .filter-box {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        select, input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .img-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 8px;
+        }
+
+        /* Power BI Iframe */
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h1>🌱 Monitoreo Fenotípico</h1>
+        <div class="nav-links">
+            <button onclick="showView('menu')" id="btn-menu" class="active">Menú Principal</button>
+            <button onclick="showView('imagenes')" id="btn-imagenes">Imágenes</button>
+            <button onclick="showView('segmentacion')" id="btn-segmentacion">Segmentación</button>
+            <button onclick="showView('analisis')" id="btn-analisis">Análisis</button>
+        </div>
+    </nav>
+
+    <!-- 1. MENÚ PRINCIPAL -->
+    <div id="view-menu" class="view active">
+        <div class="menu-cards">
+            <div class="card" onclick="showView('imagenes')">
+                <h2>📷 Imágenes</h2>
+                <p>Explorar y filtrar fotografías capturadas desde el bucket S3.</p>
+            </div>
+            <div class="card" onclick="showView('segmentacion')">
+                <h2>📐 Segmentación</h2>
+                <p>Métricas de contornos, áreas y máscaras de segmentación.</p>
+            </div>
+            <div class="card" onclick="showView('analisis')">
+                <h2>📊 Análisis</h2>
+                <p>Reportes agronómicos e inteligencia artificial (Gemini).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. VISTA IMÁGENES -->
+    <div id="view-imagenes" class="view">
+        <div class="filter-box">
+            <label for="imgSelect"><b>Seleccionar Imagen:</b></label>
+            <select id="imgSelect" onchange="displaySelectedImage()">
+                <option value="">Cargando imágenes...</option>
+            </select>
+        </div>
+        <div class="img-container">
+            <img id="viewer" src="" alt="Selecciona una imagen para visualizar" style="display:none;">
+            <p id="placeholder">Selecciona una imagen del filtro superior.</p>
+        </div>
+    </div>
+
+    <!-- 3. VISTA SEGMENTACIÓN -->
+    <div id="view-segmentacion" class="view">
+        <iframe src="https://app.powerbi.com/view?r=eyJrIjoiOTUwZjJkNzktMDhlYi00ZDhmLTlhZjQtMjVmNjNiMzBlNDllIiwidCI6IjM3NWE1YzUxLTVjYTgtNDA5YS1iZTY5LTViYWUzOGM3MzY1YyIsImMiOjR9" allowFullScreen="true"></iframe>
+    </div>
+
+    <!-- 4. VISTA ANÁLISIS -->
+    <div id="view-analisis" class="view">
+        <!-- Se le agrega el parámetro pageName o la navegación del reporte -->
+        <iframe src="https://app.powerbi.com/view?r=eyJrIjoiOTUwZjJkNzktMDhlYi00ZDhmLTlhZjQtMjVmNjNiMzBlNDllIiwidCI6IjM3NWE1YzUxLTVjYTgtNDA5YS1iZTY5LTViYWUzOGM3MzY1YyIsImMiOjR9" allowFullScreen="true"></iframe>
+    </div>
+
+    <script>
+        let listaImagenes = [];
+
+        function showView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(`view-${viewName}`).classList.add('active');
+            document.getElementById(`btn-${viewName}`).classList.add('active');
+
+            if (viewName === 'imagenes' && listaImagenes.length === 0) {
+                cargarImagenes();
+            }
+        }
+
+        async function cargarImagenes() {
+            try {
+                const res = await fetch('/api/imagenes');
+                listaImagenes = await res.json();
+                
+                const select = document.getElementById('imgSelect');
+                select.innerHTML = '<option value="">-- Selecciona una foto --</option>';
+
+                listaImagenes.forEach(img => {
+                    const option = document.createElement('option');
+                    option.value = img.url;
+                    option.textContent = img.nombre;
+                    select.appendChild(option);
+                });
+            } catch (e) {
+                console.error("Error al cargar lista de imágenes", e);
+            }
+        }
+
+        function displaySelectedImage() {
+            const url = document.getElementById('imgSelect').value;
+            const imgEl = document.getElementById('viewer');
+            const placeholder = document.getElementById('placeholder');
+
+            if (url) {
+                imgEl.src = url;
+                imgEl.style.display = 'block';
+                placeholder.style.display = 'none';
+            } else {
+                imgEl.style.display = 'none';
+                placeholder.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

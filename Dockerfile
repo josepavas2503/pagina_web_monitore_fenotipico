@@ -1,6 +1,20 @@
-FROM nginx:alpine
-# Modificar la configuración interna de Nginx para usar el puerto 8080
-RUN sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/conf.d/default.conf
-COPY . /usr/share/nginx/html
-EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+# 1. Imagen base liviana de Node.js
+FROM node:18-alpine
+
+# 2. Crear carpeta de trabajo en el contenedor
+WORKDIR /app
+
+# 3. Copiar archivos de dependencias
+COPY package*.json ./
+
+# 4. Instalar dependencias
+RUN npm install --production
+
+# 5. Copiar el resto del proyecto (server.js, carpeta public/, etc.)
+COPY . .
+
+# 6. Exponer el puerto
+EXPOSE 3000
+
+# 7. Comando de inicio del servidor
+CMD ["node", "server.js"]
