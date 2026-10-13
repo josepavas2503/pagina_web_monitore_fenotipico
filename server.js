@@ -20,35 +20,38 @@ const s3 = new S3Client({
     }
 });
 
-// Endpoint para listar las imágenes del Bucket S3
+// Endpoint para listar las imágenes dentro de la carpeta 'imagenes/'
 app.get('/api/imagenes', async (req, res) => {
     try {
         const command = new ListObjectsV2Command({
-            Bucket: process.env.BUCKET_NAME
+            Bucket: process.env.BUCKET_NAME,
+            Prefix: 'imagenes/' // <--- Filtra únicamente los archivos dentro de esta carpeta
         });
         const data = await s3.send(command);
 
         if (!data.Contents || data.Contents.length === 0) {
-            console.log("El bucket está vacío o no se encontraron objetos.");
+            console.log("No se encontraron objetos en la carpeta imagenes/.");
             return res.json([]);
         }
 
-        // Filtrar solo archivos de imagen (.jpg, .png, .jpeg) y generar Presigned URLs
+        // 1. Descartar el marcador de carpeta y filtrar solo archivos con extensiones de imagen
         const archivosImagen = data.Contents.filter(item => 
-            /\.(jpg|jpeg|png|webp)$/i.test(item.Key)
+            item.Key !== 'imagenes/' && /\.(jpg|jpeg|png|webp)$/i.test(item.Key)
         );
 
+        // 2. Generar Presigned URLs para cada imagen encontrada
         const imagenes = await Promise.all(
             archivosImagen.map(async (item) => {
                 const getObjectCmd = new GetObjectCommand({
                     Bucket: process.env.BUCKET_NAME,
-                    Key: item.Key
+                    Key: item.Key // Requiere la ruta completa (ej. "imagenes/foto.jpg")
                 });
-                // Genera una URL temporal con acceso de lectura (válida por 1 hora)
+                
                 const signedUrl = await getSignedUrl(s3, getObjectCmd, { expiresIn: 3600 });
 
                 return {
-                    nombre: item.Key,
+                    nombre: item.Key.replace(/^imagenes\//, ''), // Limpia "imagenes/" para mostrar solo "foto.jpg"
+                    key_completa: item.Key,
                     url: signedUrl
                 };
             })
@@ -56,7 +59,7 @@ app.get('/api/imagenes', async (req, res) => {
 
         res.json(imagenes);
     } catch (err) {
-        console.error("Error consultando S3 en Railway:", err);
+        console.error("Error consultando la carpeta imagenes/ en S3:", err);
         res.status(500).json({ error: "Error al obtener imágenes del bucket", detalles: err.message });
     }
 });
