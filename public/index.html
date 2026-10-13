@@ -3,226 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Monitoreo Fenotípico</title>
-    <style>
-        :root {
-            --primary: #1b4332;
-            --accent: #2d6a4f;
-            --bg: #f4f6f8;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            background-color: var(--bg);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        /* Navbar */
-        nav {
-            background-color: var(--primary);
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        nav h1 { margin: 0; font-size: 1.2rem; }
-
-        .nav-links button {
-            background: none;
-            border: none;
-            color: white;
-            padding: 10px 18px;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .nav-links button:hover, .nav-links button.active {
-            background-color: var(--accent);
-        }
-
-        /* Vistas */
-        .view { display: none; padding: 20px; flex: 1; }
-        .view.active { display: flex; flex-direction: column; }
-
-        /* Vista Menú */
-        .menu-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            max-width: 900px;
-            margin: 40px auto;
-            width: 100%;
-        }
-
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .card:hover { transform: translateY(-5px); }
-        .card h2 { color: var(--primary); }
-
-        /* Vista Imágenes */
-        .filter-box {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        select, input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .img-container {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .img-container img {
-            max-width: 100%;
-            max-height: 70vh;
-            border-radius: 8px;
-        }
-
-        /* Power BI Iframe */
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 8px;
-            flex: 1;
-        }
-    </style>
+    <title>Monitoreo Fenotípico - UCO</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 
     <nav>
-        <h1>🌱 Monitoreo Fenotípico</h1>
+        <div class="brand">
+            <img src="/assets/uco_logo.png" alt="Logo UCO">
+            <h1>Plataforma de Monitoreo Fenotípico</h1>
+        </div>
         <div class="nav-links">
-            <button onclick="showView('menu')" id="btn-menu" class="active">Menú Principal</button>
+            <button onclick="showView('menu')" id="btn-menu" class="active">Inicio</button>
             <button onclick="showView('imagenes')" id="btn-imagenes">Imágenes</button>
-            <button onclick="showView('segmentacion')" id="btn-segmentacion">Segmentación</button>
-            <button onclick="showView('analisis')" id="btn-analisis">Análisis</button>
+            <button onclick="showView('segmentacion-img')" id="btn-segmentacion-img">Img. Segmentadas</button>
+            <button onclick="showView('analisis-bi')" id="btn-analisis-bi">Dash. Análisis</button>
+            <button onclick="showView('segmentacion-bi')" id="btn-segmentacion-bi">Dash. Segmentación</button>
         </div>
     </nav>
 
-    <!-- 1. MENÚ PRINCIPAL -->
+    <!-- 1. VISTA MENÚ PRINCIPAL -->
     <div id="view-menu" class="view active">
+        <div class="intro-box">
+            <h2>Ingeniería y Agroindustria 4.0</h2>
+            <p>
+                Bienvenido a la plataforma IoT de monitoreo y fenotipado. Este sistema integra la captura de imágenes en tiempo real, 
+                almacenamiento en la nube (S3), procesamiento mediante inteligencia artificial (YOLO y Gemini) y visualización de datos de la producción.
+            </p>
+        </div>
         <div class="menu-cards">
             <div class="card" onclick="showView('imagenes')">
-                <h2>📷 Imágenes</h2>
-                <p>Explorar y filtrar fotografías capturadas desde el bucket S3.</p>
+                <h3>📷 Crudas</h3>
+                <p>Capturas originales RTSP.</p>
             </div>
-            <div class="card" onclick="showView('segmentacion')">
-                <h2>📐 Segmentación</h2>
-                <p>Métricas de contornos, áreas y máscaras de segmentación.</p>
+            <div class="card" onclick="showView('segmentacion-img')">
+                <h3>🔲 Segmentadas</h3>
+                <p>Máscaras procesadas por IA.</p>
             </div>
-            <div class="card" onclick="showView('analisis')">
-                <h2>📊 Análisis</h2>
-                <p>Reportes agronómicos e inteligencia artificial (Gemini).</p>
+            <div class="card" onclick="showView('analisis-bi')">
+                <h3>📊 Análisis</h3>
+                <p>Reportes de salud por Gemini.</p>
+            </div>
+            <div class="card" onclick="showView('segmentacion-bi')">
+                <h3>📐 Métricas</h3>
+                <p>Áreas y contornos agronómicos.</p>
             </div>
         </div>
     </div>
 
-    <!-- 2. VISTA IMÁGENES -->
+    <!-- 2. VISTA IMÁGENES ORIGINALES -->
     <div id="view-imagenes" class="view">
         <div class="filter-box">
-            <label for="imgSelect"><b>Seleccionar Imagen:</b></label>
-            <select id="imgSelect" onchange="displaySelectedImage()">
+            <label><b>Fotos Originales:</b></label>
+            <select id="select-img" onchange="displayImage('select-img', 'viewer-img', 'placeholder-img')">
                 <option value="">Cargando imágenes...</option>
             </select>
         </div>
         <div class="img-container">
-            <img id="viewer" src="" alt="Selecciona una imagen para visualizar" style="display:none;">
-            <p id="placeholder">Selecciona una imagen del filtro superior.</p>
+            <img id="viewer-img" src="" style="display:none;">
+            <p id="placeholder-img">Selecciona una imagen original capturada.</p>
         </div>
     </div>
 
-    <!-- 3. VISTA SEGMENTACIÓN -->
-    <div id="view-segmentacion" class="view">
+    <!-- 3. VISTA IMÁGENES SEGMENTADAS (Nueva) -->
+    <div id="view-segmentacion-img" class="view">
+        <div class="filter-box">
+            <label><b>Fotos Procesadas (YOLO):</b></label>
+            <select id="select-seg" onchange="displayImage('select-seg', 'viewer-seg', 'placeholder-seg')">
+                <option value="">Cargando imágenes procesadas...</option>
+            </select>
+        </div>
+        <div class="img-container">
+            <img id="viewer-seg" src="" style="display:none;">
+            <p id="placeholder-seg">Selecciona una imagen segmentada para visualizar.</p>
+        </div>
+    </div>
+
+    <!-- 4. VISTA POWER BI - ANÁLISIS (Primero) -->
+    <div id="view-analisis-bi" class="view">
+        <iframe src="https://app.powerbi.com/view?r=https://app.powerbi.com/view?r=eyJrIjoiOTUwZjJkNzktMDhlYi00ZDhmLTlhZjQtMjVmNjNiMzBlNDllIiwidCI6IjM3NWE1YzUxLTVjYTgtNDA5YS1iZTY5LTViYWUzOGM3MzY1YyIsImMiOjR9" allowFullScreen="true"></iframe>
+    </div>
+
+    <!-- 5. VISTA POWER BI - SEGMENTACIÓN (Segundo) -->
+    <div id="view-segmentacion-bi" class="view">
+        <!-- NOTA: Puse el mismo link. Si tienes el link del 2do reporte, reemplázalo aquí -->
         <iframe src="https://app.powerbi.com/view?r=eyJrIjoiOTUwZjJkNzktMDhlYi00ZDhmLTlhZjQtMjVmNjNiMzBlNDllIiwidCI6IjM3NWE1YzUxLTVjYTgtNDA5YS1iZTY5LTViYWUzOGM3MzY1YyIsImMiOjR9" allowFullScreen="true"></iframe>
     </div>
 
-    <!-- 4. VISTA ANÁLISIS -->
-    <div id="view-analisis" class="view">
-        <!-- Se le agrega el parámetro pageName o la navegación del reporte -->
-        <iframe src="https://app.powerbi.com/view?r=eyJrIjoiOTUwZjJkNzktMDhlYi00ZDhmLTlhZjQtMjVmNjNiMzBlNDllIiwidCI6IjM3NWE1YzUxLTVjYTgtNDA5YS1iZTY5LTViYWUzOGM3MzY1YyIsImMiOjR9" allowFullScreen="true"></iframe>
-    </div>
-
-    <script>
-        let listaImagenes = [];
-
-        function showView(viewName) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
-
-            document.getElementById(`view-${viewName}`).classList.add('active');
-            document.getElementById(`btn-${viewName}`).classList.add('active');
-
-            if (viewName === 'imagenes' && listaImagenes.length === 0) {
-                cargarImagenes();
-            }
-        }
-
-        async function cargarImagenes() {
-            try {
-                const res = await fetch('/api/imagenes');
-                listaImagenes = await res.json();
-                
-                const select = document.getElementById('imgSelect');
-                select.innerHTML = '<option value="">-- Selecciona una foto --</option>';
-
-                listaImagenes.forEach(img => {
-                    const option = document.createElement('option');
-                    option.value = img.url;
-                    option.textContent = img.nombre;
-                    select.appendChild(option);
-                });
-            } catch (e) {
-                console.error("Error al cargar lista de imágenes", e);
-            }
-        }
-
-        function displaySelectedImage() {
-            const url = document.getElementById('imgSelect').value;
-            const imgEl = document.getElementById('viewer');
-            const placeholder = document.getElementById('placeholder');
-
-            if (url) {
-                imgEl.src = url;
-                imgEl.style.display = 'block';
-                placeholder.style.display = 'none';
-            } else {
-                imgEl.style.display = 'none';
-                placeholder.style.display = 'block';
-            }
-        }
-    </script>
+    <script src="/js/app.js"></script>
 </body>
 </html>
