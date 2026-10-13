@@ -4,14 +4,22 @@ const cacheS3 = {
     segmentacion: []
 };
 
+// ... código anterior de app.js ...
+
 function showView(viewName) {
     // Ocultar todas las vistas y quitar el foco de los botones
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
 
-    // Mostrar la vista seleccionada
-    document.getElementById(`view-${viewName}`).classList.add('active');
-    document.getElementById(`btn-${viewName}`).classList.add('active');
+    // Si seleccionan análisis o segmentación BI, redirigimos a la vista unificada
+    if (viewName === 'analisis-bi' || viewName === 'segmentacion-bi') {
+        document.getElementById(`view-powerbi`).classList.add('active');
+        document.getElementById(`btn-${viewName}`).classList.add('active');
+    } else {
+        // Mostrar la vista seleccionada (menu, imagenes, segmentacion-img)
+        document.getElementById(`view-${viewName}`).classList.add('active');
+        document.getElementById(`btn-${viewName}`).classList.add('active');
+    }
 
     // Cargar S3 automáticamente si la pestaña lo requiere y está vacía
     if (viewName === 'imagenes' && cacheS3.imagenes.length === 0) {
@@ -21,6 +29,8 @@ function showView(viewName) {
         cargarDesdeS3('segmentacion', 'select-seg');
     }
 }
+
+// ... resto de tu app.js ...
 
 async function cargarDesdeS3(carpeta, selectId) {
     try {
