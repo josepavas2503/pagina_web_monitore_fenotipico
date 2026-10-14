@@ -8,27 +8,27 @@
 </head>
 <body>
 
-    <nav>
+    <header>
         <div class="brand">
-            <img src="/assets/uco_logo.png" alt="Logo UCO">
+            <img src="/assets/uco_logo.png" alt="Logo Universidad Católica de Oriente">
             <h1>Plataforma de Monitoreo Fenotípico</h1>
         </div>
         <div class="nav-links">
             <button onclick="showView('menu')" id="btn-menu" class="active">Inicio</button>
-            <button onclick="showView('imagenes')" id="btn-imagenes">Imágenes</button>
-            <button onclick="showView('segmentacion-img')" id="btn-segmentacion-img">Img. Segmentadas</button>
+            <button onclick="showView('imagenes')" id="btn-imagenes">Imágenes Crudas</button>
+            <button onclick="showView('segmentacion-img')" id="btn-segmentacion-img">Segmentadas</button>
             <button onclick="showView('analisis-bi')" id="btn-analisis-bi">Dash. Análisis</button>
             <button onclick="showView('segmentacion-bi')" id="btn-segmentacion-bi">Dash. Segmentación</button>
         </div>
-    </nav>
+    </header>
 
     <!-- 1. VISTA MENÚ PRINCIPAL -->
     <div id="view-menu" class="view active">
         <div class="intro-box">
-            <h2>Ingeniería y Agroindustria 4.0</h2>
+            <h2>Ingeniería Electrónica</h2>
             <p>
                 Bienvenido a la plataforma IoT de monitoreo y fenotipado. Este sistema integra la captura de imágenes en tiempo real, 
-                almacenamiento en la nube (S3), procesamiento mediante inteligencia artificial (YOLO y Gemini) y visualización de datos de la producción.
+                almacenamiento en la nube (S3), procesamiento mediante inteligencia artificial y visualización de datos de la producción.
             </p>
         </div>
         <div class="menu-cards">
