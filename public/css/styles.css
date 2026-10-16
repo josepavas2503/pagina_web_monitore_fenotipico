@@ -248,3 +248,31 @@ iframe {
     border: none;
     background: #FFFFFF;
 }
+
+
+
+#view-analisis-bi,
+#view-segmentacion-bi {
+    display: none;
+    box-sizing: border-box;
+    width: 100%;
+    height: 80vh;
+    min-height: 600px;
+    padding: 10px;
+}
+
+#view-analisis-bi.active,
+#view-segmentacion-bi.active {
+    display: flex;
+    flex-direction: column;
+}
+
+#view-analisis-bi iframe,
+#view-segmentacion-bi iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    flex: 1;
+    border: none;
+}
