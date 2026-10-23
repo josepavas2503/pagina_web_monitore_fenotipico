@@ -1,12 +1,11 @@
 const { S3Client } = require('@aws-sdk/client-s3');
 
 const s3 = new S3Client({
-    region: process.env.AWS_REGION || 'auto',
-    // Si la variable de entorno falla, usa tu URL personalizada directamente
-    endpoint: process.env.AWS_ENDPOINT || 'https://t3.storageapi.dev', 
+    region: 'auto',
+    endpoint: 'https://t3.storageapi.dev',
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+        accessKeyId: 'tid_qZWqiYKkvoRhUhibdhCuUZguyrZZWwLRNyoxCFkairMAAHgXHG',
+        secretAccessKey: 'tsec_0KtyMfpVGS6p-Eu1huj2CoC4DFBRwz_3MqjqGQ334giOw+F4FrU-B-Azrxu7oUPAYYOsLh'
     },
     forcePathStyle: true 
 });
