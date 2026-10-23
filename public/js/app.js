@@ -7,25 +7,33 @@ const cacheS3 = {
 // ... código anterior de app.js ...
 
 function showView(viewName) {
-    // Ocultar todas las vistas y quitar el foco de los botones
+    // 1. Ocultar todas las vistas y desactivar todos los botones
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
 
-    // Si seleccionan análisis o segmentación BI, redirigimos a la vista unificada
-    if (viewName === 'analisis-bi' || viewName === 'segmentacion-bi') {
-        document.getElementById(`view-powerbi`).classList.add('active');
-        document.getElementById(`btn-${viewName}`).classList.add('active');
+    // 2. Limpiar el nombre por si viene con prefijo 'view-'
+    const cleanName = viewName.replace(/^view-/, '');
+
+    // 3. Obtener los elementos del DOM
+    const targetView = document.getElementById(`view-${cleanName}`);
+    const targetBtn = document.getElementById(`btn-${cleanName}`);
+
+    // 4. Activar la vista y el botón solo si existen en el HTML
+    if (targetView) {
+        targetView.classList.add('active');
     } else {
-        // Mostrar la vista seleccionada (menu, imagenes, segmentacion-img)
-        document.getElementById(`view-${viewName}`).classList.add('active');
-        document.getElementById(`btn-${viewName}`).classList.add('active');
+        console.warn(`No se encontró el contenedor con ID: view-${cleanName}`);
     }
 
-    // Cargar S3 automáticamente si la pestaña lo requiere y está vacía
-    if (viewName === 'imagenes' && cacheS3.imagenes.length === 0) {
+    if (targetBtn) {
+        targetBtn.classList.add('active');
+    }
+
+    // 5. Cargar S3 si aplica
+    if (cleanName === 'imagenes' && cacheS3.imagenes?.length === 0) {
         cargarDesdeS3('imagenes', 'select-img');
     }
-    if (viewName === 'segmentacion-img' && cacheS3.segmentacion.length === 0) {
+    if (cleanName === 'segmentacion-img' && cacheS3.segmentacion?.length === 0) {
         cargarDesdeS3('segmentacion', 'select-seg');
     }
 }
