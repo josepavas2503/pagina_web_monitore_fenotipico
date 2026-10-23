@@ -2,31 +2,31 @@ const { ListObjectsV2Command, GetObjectCommand } = require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const s3 = require('../config/s3');
 
-const MI_BUCKET = 'organized-pierogi-qdsacep';
-
-const getFilesByFolder = async (req, res) => {
+exports.getImagesByFolder = async (req, res) => {
+    // Lee la carpeta desde la URL (ej: /api/s3/imagenes o /api/s3/segmentacion)
     const folder = req.params.folder; 
     const prefix = `${folder}/`;
 
     try {
         const command = new ListObjectsV2Command({
-            Bucket: MI_BUCKET,
+            Bucket: process.env.BUCKET_NAME,
             Prefix: prefix
         });
         const data = await s3.send(command);
 
         if (!data.Contents || data.Contents.length === 0) {
-            return res.json([]); 
+            return res.json([]);
         }
 
-        const archivos = data.Contents.filter(item => 
-            item.Key !== prefix && /\.(jpg|jpeg|png|gif)$/i.test(item.Key)
+        // Filtrar objetos reales de imagen
+        const archivosImagen = data.Contents.filter(item => 
+            item.Key !== prefix && /\.(jpg|jpeg|png|webp)$/i.test(item.Key)
         );
 
-        const documentos = await Promise.all(
-            archivos.map(async (item) => {
+        const imagenes = await Promise.all(
+            archivosImagen.map(async (item) => {
                 const getObjectCmd = new GetObjectCommand({
-                    Bucket: MI_BUCKET,
+                    Bucket: process.env.BUCKET_NAME,
                     Key: item.Key
                 });
                 const signedUrl = await getSignedUrl(s3, getObjectCmd, { expiresIn: 3600 });
@@ -38,13 +38,9 @@ const getFilesByFolder = async (req, res) => {
             })
         );
 
-        res.json(documentos);
+        res.json(imagenes);
     } catch (err) {
         console.error(`Error en S3 (${prefix}):`, err);
         res.status(500).json({ error: "Error al obtener imágenes", detalles: err.message });
     }
-};
-
-module.exports = {
-    getFilesByFolder
 };

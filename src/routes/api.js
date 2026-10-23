@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const s3Controller = require('../controllers/s3Controller');
 
-// Línea 6: Asigna la función getFilesByFolder que debe estar exportada en s3Controller
-router.get('/s3/:folder', s3Controller.getFilesByFolder);
+// Ruta dinámica para leer cualquier subcarpeta de S3
+router.get('/s3/:folder', s3Controller.getImagesByFolder);
 
 module.exports = router;
